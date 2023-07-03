@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 
 
 
-<flow name="get:\albums:AS-music-factory-api-config">
+<flow name="get:\songs:AS-music-factory-api-config">
         <ee:transform>
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -15,31 +15,46 @@ output application/json
 ---
 {
   statusCode: 200,
-  message: "SUCCESS",
-  searchCriteria: "Let it Be",
-  albums: [
+  message: "SUCCESSFUL",
+  searchCriteria: "Kill",
+  songs: [
     {
-      albumId: 1,
-      albumTitle: "The Beatles",
-      genre: "Rock",
-      publicationDate: "1968-11-22",
-      artistId: 1,
-      groupName: "The Beatles"
+      songId: 13,
+      songTitle: "I May Kill Myself",
+      genre: "Other",
+      publicationDate: "1942-01-02",
+      duration: "13:52",
+      albumId: 8,
+      albumName: "Harry Belts a Tune",
+      songWriters: [
+        {
+          writer: "Harry Carry"
+        }
+      ]
     }, 
     {
-      albumId: 4,
-      albumTitle: "Let It Be",
+      songId: 13,
+      songTitle: "Don't Kill Yourself",
       genre: "Rock",
-      publicationDate: "2000-05-08",
-      artistId: 1,
-      groupName: "The Beatles"
+      publicationDate: "1951-01-02",
+      duration: "13:52",
+      albumId: 8,
+      albumName: "Saving A Life Today",
+      songWriters: [
+        {
+          writer: "Will Meaning"
+        }
+      ]
     }
   ]
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
-	<flow name="post:\albums:application\json:AS-music-factory-api-config">
+
+
+
+<flow name="post:\songs:application\json:AS-music-factory-api-config">
         <ee:transform>
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
@@ -48,32 +63,32 @@ output application/json
 {
   statusCode: 201,
   message: "SUCCESS",
-  albums: [
+  songs: [
     {
-      albumId: 1001,
-      albumTitle: "Telegraph Canyon I",
-      genre: "Pop",
-      publicationDate: "2016-01-29",
-      artistId: 5,
-      artistName: "His Majesty"
+      songTitle: "Como Anda La Cucaracha",
+      publicationDate: "1954-01-07",
+      duration: "4:29",
+      genre: "Mariachi",
+      albumId: 6,
+      artistId: 101
     }, 
     {
-      albumId: 1002,
-      albumTitle: "Telegraph Canyon II",
-      genre: "Pop",
-      publicationDate: "2018-01-29",
-      artistId: 5,
-      artistName: "Prince"
+      songTitle: "La Bamba",
+      publicationDate: "1959-03-30",
+      duration: "3:52",
+      genre: "Other",
+      albumId: 7,
+      artistId: 102
     }
   ]
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
-	<flow name="get:\albums\(albumId):AS-music-factory-api-config">
+	<flow name="get:\songs\(songId):AS-music-factory-api-config">
         <ee:transform>
             <ee:variables>
-                <ee:set-variable variableName="albumId">attributes.uriParams.'albumId'</ee:set-variable>
+                <ee:set-variable variableName="songId">attributes.uriParams.'songId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
         <ee:transform>
@@ -84,21 +99,30 @@ output application/json
 {
   statusCode: 200,
   message: "SUCCESS",
-  album: {
-    albumTitle: "Let It Be (CD)",
-    genre: "Rock",
-    publicationDate: "2000-05-18",
-    artistId: 1,
-    artistName: "The Beatles"
+  song: {
+    songTitle: "Don't Mess With Texas",
+    publicationDate: "2016-10-05",
+    genre: "Pop",
+    duration: "3:15",
+    songId: 15,
+    artistId: 5,
+    songWriters: [
+      {
+        writer: "Ted Cruz"
+      }, 
+      {
+        writer: "Greg Abbott"
+      }
+    ]
   }
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
-	<flow name="put:\albums\(albumId):application\json:AS-music-factory-api-config">
+	<flow name="put:\songs\(songId):application\json:AS-music-factory-api-config">
         <ee:transform>
             <ee:variables>
-                <ee:set-variable variableName="albumId">attributes.uriParams.'albumId'</ee:set-variable>
+                <ee:set-variable variableName="songId">attributes.uriParams.'songId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
         <ee:transform>
@@ -108,15 +132,15 @@ output application/json
 ---
 {
   statusCode: 200,
-  message: "The album has been updated."
+  message: "The song has been updated."
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
-    <flow name="delete:\albums\(albumId):AS-music-factory-api-config">
+	<flow name="delete:\songs\(songId):AS-music-factory-api-config">
         <ee:transform>
             <ee:variables>
-                <ee:set-variable variableName="albumId">attributes.uriParams.'albumId'</ee:set-variable>
+                <ee:set-variable variableName="songId">attributes.uriParams.'songId'</ee:set-variable>
             </ee:variables>
         </ee:transform>
         <ee:transform>
@@ -126,7 +150,7 @@ output application/json
 ---
 {
   statusCode: 200,
-  message: "The album has been deleted."
+  message: "The song has been deleted."
 }]]></ee:set-payload>
             </ee:message>
         </ee:transform>
@@ -136,6 +160,4 @@ output application/json
 
 
 
-
-
-	</mule>
+</mule>
