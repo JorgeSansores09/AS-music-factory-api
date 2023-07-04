@@ -2,4 +2,14 @@
 
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"></mule>
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="impl-get-artists" doc:id="f125b883-dbb4-4b60-9d62-0554bef7d63f" >
+		<logger level="INFO" doc:name="INFO START" doc:id="d79d6ff9-06a8-4e0e-bbfb-06f46ecadc9c" message="impl-get-artists::START"/>
+	</sub-flow>
+	<sub-flow name="impl-add-artists" doc:id="8aa0fb78-7b58-4d60-908e-2453316ecbc7" >
+		<logger level="INFO" doc:name="INFO START" doc:id="a5021f43-f84e-4822-b6be-2b578706c9b8" message="#['impl-add-artists::START::payload:'  ++ write(payload, 'application/json')]"/>
+	</sub-flow>
+	<sub-flow name="impl-update-artist-urls" doc:id="f1cf67fe-a67c-400c-b2c0-f46536bf1891" >
+		<logger level="INFO" doc:name="INFO START" doc:id="1a4246ca-44a1-43ad-a624-3aca6a0604e3" message="#['impl-update-artist-urls::START::payload:'  ++ write(payload, 'application/json')]"/>
+	</sub-flow>
+</mule>

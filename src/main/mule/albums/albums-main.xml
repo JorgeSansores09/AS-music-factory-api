@@ -8,7 +8,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 
 
 <flow name="get:\albums:AS-music-factory-api-config">
-        <ee:transform>
+        <set-variable value="albums-main::impl-get-albums" doc:name="currentFlow" doc:id="42afdf88-8328-456d-8a63-a94e10cceb4b" variableName="currentFlow"/>
+		<flow-ref doc:name="Flow Reference" doc:id="20dd9e3e-f4a0-458f-995e-d7b9a190e72f" name="impl-get-albums"/>
+		<ee:transform>
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -40,7 +42,9 @@ output application/json
         </ee:transform>
     </flow>
 	<flow name="post:\albums:application\json:AS-music-factory-api-config">
-        <ee:transform>
+        <set-variable value="albums-main::impl-add-albums" doc:name="currentFlow" doc:id="005ceee8-0ecb-4634-88dd-ac24cd90e26f" variableName="currentFlow"/>
+		<flow-ref doc:name="Flow Reference" doc:id="ca348b51-2784-4de3-b0a2-86f2968b2b04" name="impl-add-albums"/>
+		<ee:transform>
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
