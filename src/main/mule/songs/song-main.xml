@@ -10,48 +10,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 <flow name="get:\songs:AS-music-factory-api-config">
         <set-variable value="song-main::impl-get-songs" doc:name="currentFlow" doc:id="afdf3e5b-0c84-4b4c-9800-18cad3d142b4" variableName="currentFlow"/>
 		<flow-ref doc:name="Flow Reference" doc:id="f44c2788-028b-4978-8c0f-a2de39b52359" name="impl-get-songs"/>
-		<ee:transform>
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  statusCode: 200,
-  message: "SUCCESSFUL",
-  searchCriteria: "Kill",
-  songs: [
-    {
-      songId: 13,
-      songTitle: "I May Kill Myself",
-      genre: "Other",
-      publicationDate: "1942-01-02",
-      duration: "13:52",
-      albumId: 8,
-      albumName: "Harry Belts a Tune",
-      songWriters: [
-        {
-          writer: "Harry Carry"
-        }
-      ]
-    }, 
-    {
-      songId: 13,
-      songTitle: "Don't Kill Yourself",
-      genre: "Rock",
-      publicationDate: "1951-01-02",
-      duration: "13:52",
-      albumId: 8,
-      albumName: "Saving A Life Today",
-      songWriters: [
-        {
-          writer: "Will Meaning"
-        }
-      ]
-    }
-  ]
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
     </flow>
 
 

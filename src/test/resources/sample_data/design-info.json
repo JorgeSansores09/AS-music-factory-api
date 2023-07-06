@@ -4,6 +4,8 @@
       "vars-statusCode": "sample_data/defaultstringtype.dwl",
       "vars-headerAttributes": "sample_data/json.json",
       "vars-currentFlow": "sample_data/defaultstringtype_1.dwl"
-    }
+    },
+    "7fd0348c-6d72-4158-a1af-c585606a822b": {},
+    "6e43aa35-d862-4bb0-801a-694971c1e093": {}
   }
 }

@@ -10,36 +10,6 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 <flow name="get:\albums:AS-music-factory-api-config">
         <set-variable value="albums-main::impl-get-albums" doc:name="currentFlow" doc:id="42afdf88-8328-456d-8a63-a94e10cceb4b" variableName="currentFlow"/>
 		<flow-ref doc:name="Flow Reference" doc:id="20dd9e3e-f4a0-458f-995e-d7b9a190e72f" name="impl-get-albums"/>
-		<ee:transform>
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  statusCode: 200,
-  message: "SUCCESS",
-  searchCriteria: "Let it Be",
-  albums: [
-    {
-      albumId: 1,
-      albumTitle: "The Beatles",
-      genre: "Rock",
-      publicationDate: "1968-11-22",
-      artistId: 1,
-      groupName: "The Beatles"
-    }, 
-    {
-      albumId: 4,
-      albumTitle: "Let It Be",
-      genre: "Rock",
-      publicationDate: "2000-05-08",
-      artistId: 1,
-      groupName: "The Beatles"
-    }
-  ]
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
     </flow>
 	<flow name="post:\albums:application\json:AS-music-factory-api-config">
         <set-variable value="albums-main::impl-add-albums" doc:name="currentFlow" doc:id="005ceee8-0ecb-4634-88dd-ac24cd90e26f" variableName="currentFlow"/>
