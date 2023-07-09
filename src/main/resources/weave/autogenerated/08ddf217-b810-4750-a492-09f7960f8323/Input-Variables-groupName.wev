@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_08ddf217_b810_4750_a492_09f7960f8323_Input_Variables_groupName = Any
+
