@@ -68,13 +68,6 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>9cd10cf1-fe08-4f03-90ed-c49415351c07</groupId>
-			<artifactId>as-music-factory-api</artifactId>
-			<version>1.0.0</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
 			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-db-connector</artifactId>
 			<version>1.13.6</version>
@@ -90,6 +83,13 @@
 			<artifactId>mysql-connector-j</artifactId>
 			<version>8.0.33</version>
 			<type>jar</type>
+		</dependency>
+		<dependency>
+			<groupId>9cd10cf1-fe08-4f03-90ed-c49415351c07</groupId>
+			<artifactId>as-music-factory-api</artifactId>
+			<version>1.0.2</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 

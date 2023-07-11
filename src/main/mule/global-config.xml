@@ -18,67 +18,67 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
     <configuration defaultErrorHandler-ref="globalErrorHandler"/>
 
     <!-- This Property is to use in AVIO custom logger to log the current mule application version. Change this everytime when you decided to change this application version in POM. -->
-    <global-property doc:name="Global Property" doc:id="17770a11-4157-4172-973b-72174cc545ad" name="pomVersion" value="1.0.0" />
+    <global-property doc:name="Global Property" doc:id="6016fbb5-f410-4d22-b156-2a0121ca5cf0" name="pomVersion" value="1.0.0" />
 
     <!-- This Property is to use in various properties and Custom Logger to reference the environment (e.g. local, dev, etc) -->
-	<global-property doc:name="Global Property" doc:id="a1fa49c4-d27a-47ab-bd5e-20d5f55721f5" name="env" value="local" />
+	<global-property doc:name="Global Property" doc:id="f03d236b-627c-420b-a213-543b571defee" name="env" value="local" />
 
     <!-- This is the configuration to refer and encrypt properties in properties file. -->
-    <secure-properties:config name="secure-properties-config" doc:name="Secure Properties Config" doc:id="d64f0a63-454a-486c-be29-1fcdc9534db5" file="properties/${env}.properties" key="${secureKey}" >
+    <secure-properties:config name="secure-properties-config" doc:name="Secure Properties Config" doc:id="6efc8ee0-7287-48c0-9993-51d31462c57e" file="properties/${env}.properties" key="${secureKey}" >
     	<secure-properties:encrypt algorithm="Blowfish" />
 	</secure-properties:config>
 
     <!-- This is the configuration to let this mule app talk to API Manager's corresponding API -->
-    <api-gateway:autodiscovery apiId="${api.apiId}" doc:name="API Autodiscovery" doc:id="64e53ea9-8f3d-4165-8451-fc9e075835f3" flowRef="AS-music-factory-api-main" ignoreBasePath="true"/>
+    <api-gateway:autodiscovery apiId="${api.apiId}" doc:name="API Autodiscovery" doc:id="56988d89-bcef-4852-bf92-0534208d5a73" flowRef="AS-music-factory-api-main" ignoreBasePath="true"/>
 
     <!-- Added to expedite the Bootcamp project archetype -->
-	<global-property doc:name="Global Property" doc:id="0a76d4c0-842d-40b6-9fc5-2f5cf73b0360" name="secureKey" value="password" />
+	<global-property doc:name="Global Property" doc:id="ecc17e3e-5a46-46d3-a345-ba035d1b477d" name="secureKey" value="password" />
 
     <!-- reference artifactId specific properties directory -->
-	<configuration-properties doc:name="Configuration properties" doc:id="0da4297a-cc2b-4d83-8e5d-fde6621077ec" file="properties/${env}.properties" />
+	<configuration-properties doc:name="Configuration properties" doc:id="6c0226a2-f9cf-4871-bedc-237916e33d63" file="properties/${env}.properties" />
 
     <!-- Listener references "env" specific properties -->
-	<http:listener-config name="http-listener-config" doc:name="HTTP Listener config" doc:id="110e7948-6f84-4387-937e-2728db55929e" >
+	<http:listener-config name="http-listener-config" doc:name="HTTP Listener config" doc:id="094b8421-1ca2-4055-aa33-cfcc10e67d1a" >
 		<http:listener-connection host="${http.host}" port="${http.port}" />
 	</http:listener-config>
-	<sps-logger:config name="SPS_Logger_Config" doc:name="SPS-Logger Config" doc:id="ea75707d-c112-4125-9d7a-481b176a46c1" appName="${api.name}" appVersion="${api.version}" />
-	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="8162085d-de58-430c-a2cb-fba54ad1ec40" name="AS-music-factory-api-config" api="api\AS-music-factory-api.raml" />
-	<db:config name="mysql-config" doc:name="Database Config" doc:id="099f622a-7f9a-4b87-baca-414c120a11f5" >
+	<sps-logger:config name="SPS_Logger_Config" doc:name="SPS-Logger Config" doc:id="14cf1ed2-802f-4a5b-b8fc-f2101f10294a" appName="${api.name}" appVersion="${api.version}" />
+	<apikit:config outboundHeadersMapName="outboundHeadersMapName" httpStatusVarName="httpStatus" doc:name="Router" doc:id="8f00bf85-8e54-4124-92e8-277d93fee566" name="AS-music-factory-api-config" api="api\AS-music-factory-api.raml" />
+	<db:config name="mysql-config" doc:name="Database Config" doc:id="f9887bca-a83b-4d98-aa80-620078d90fac" >
 		<db:my-sql-connection host="${db.host}" port="${db.port}" user="${db.username}" password="${db.password}" database="${db.databaseMusic}" />
 	</db:config>
 	<error-handler name="globalErrorHandler">
             <on-error-propagate type="APIKIT:BAD_REQUEST" enableNotifications="true" logException="false">
-				<set-variable value="400" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73" variableName="statusCode"/>
-				<flow-ref doc:name="error-handling-subflow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96" name="error-handling-subflow"/>
+				<set-variable value="400" doc:name="Set HTTP Status code" doc:id="0bd907b8-df4e-41f2-b2fb-c328a659eb24" variableName="statusCode"/>
+				<flow-ref doc:name="error-handling-subflow" doc:id="b0bb5e8c-1aae-4e14-b2cd-dfbad685a020" name="error-handling-subflow"/>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_FOUND" enableNotifications="true" logException="false">
-				<set-variable value="404" doc:name="Set HTTP Status code" doc:id="5f6f2bd7-a208-4998-a35c-a18eef871ae1" variableName="statusCode"/>
-				<flow-ref doc:name="error-handling-subflow" doc:id="8fc5a7ea-ba62-4053-bd85-c2a51cc6cd09" name="error-handling-subflow"/>
+				<set-variable value="404" doc:name="Set HTTP Status code" doc:id="1abebfa9-7022-4fe4-86d0-b54ee99d5f67" variableName="statusCode"/>
+				<flow-ref doc:name="error-handling-subflow" doc:id="5f6efff6-4cfd-45fb-a25e-d89a311ac57d" name="error-handling-subflow"/>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED" enableNotifications="true" logException="false">
-				<set-variable value="405" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73" variableName="statusCode"/>
-				<flow-ref doc:name="error-handling-subflow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96" name="error-handling-subflow"/>
+				<set-variable value="405" doc:name="Set HTTP Status code" doc:id="8f5af0f2-3421-4d52-8baa-80823da6d62f" variableName="statusCode"/>
+				<flow-ref doc:name="error-handling-subflow" doc:id="e26465d0-67bb-43a0-b573-3c1a9cb1708b" name="error-handling-subflow"/>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE" enableNotifications="true" logException="false">
-				<set-variable value="406" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73" variableName="statusCode"/>
-				<flow-ref doc:name="error-handling-subflow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96" name="error-handling-subflow"/>
+				<set-variable value="406" doc:name="Set HTTP Status code" doc:id="1511754d-dbb8-455b-82a5-c355937843b9" variableName="statusCode"/>
+				<flow-ref doc:name="error-handling-subflow" doc:id="84af9d20-eee6-4b03-bd96-7c10b470186c" name="error-handling-subflow"/>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE" enableNotifications="true" logException="false">
-				<set-variable value="415" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73" variableName="statusCode"/>
-				<flow-ref doc:name="error-handling-subflow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96" name="error-handling-subflow"/>
+				<set-variable value="415" doc:name="Set HTTP Status code" doc:id="ce7c32b5-0f9a-4ef0-8801-a1f8ba8d053b" variableName="statusCode"/>
+				<flow-ref doc:name="error-handling-subflow" doc:id="3578a9ca-a8a9-49c5-a868-ce3449571b03" name="error-handling-subflow"/>
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED" enableNotifications="true" logException="false">
-				<set-variable value="501" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73" variableName="statusCode"/>
-				<flow-ref doc:name="error-handling-subflow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96" name="error-handling-subflow"/>
+				<set-variable value="501" doc:name="Set HTTP Status code" doc:id="3e97ef15-f112-4289-873d-fe603734c65d" variableName="statusCode"/>
+				<flow-ref doc:name="error-handling-subflow" doc:id="336eb22c-7c69-4063-9da8-49411d4d6728" name="error-handling-subflow"/>
             </on-error-propagate>
-			<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="5d14246f-b613-44f0-9c61-6028e61493a6" type="ANY">
-				<set-variable value="500" doc:name="Set HTTP Status code" doc:id="1d6586fd-fb35-42e5-8bdc-3c21840bba73" variableName="statusCode"/>
-				<flow-ref doc:name="error-handling-subflow" doc:id="b795ed54-98fd-4265-ba7a-a0a484971f96" name="error-handling-subflow"/>
+			<on-error-propagate enableNotifications="true" logException="false" doc:name="On Error Propagate" doc:id="5d071be0-0d63-4287-9187-0cd67c7b0988" type="ANY">
+				<set-variable value="500" doc:name="Set HTTP Status code" doc:id="fee4bd9c-a235-4ef9-b6f0-920a0bb5294d" variableName="statusCode"/>
+				<flow-ref doc:name="error-handling-subflow" doc:id="b7bc6e80-b9f5-4598-b718-c05f6f5cdb55" name="error-handling-subflow"/>
 			</on-error-propagate>
         </error-handler>
 	
-	<sub-flow name="error-handling-subflow" doc:id="3b4e3606-24c8-45a0-8b78-c2befbc6224e" >
-		<ee:transform doc:name="Prepare Exception Response" doc:id="fe4c4d73-1774-4686-bf07-bb8f735baf1c" >
+	<sub-flow name="error-handling-subflow" doc:id="53dba435-e47a-4774-a589-f178f320277d" >
+		<ee:transform doc:name="Prepare Exception Response" doc:id="e74e0a76-76fe-40f3-a02b-d311bc0b5e41" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -96,7 +96,7 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<sps-logger:sps-logger doc:name="Exception Response" doc:id="25f9fe29-3538-4697-8206-949c9827fdab" config-ref="SPS_Logger_Config" targetSystem="Error handling" eventName="EXCEPTION" level="ERROR" correlationId="#[vars.headerAttributes.correlationId]" statusCode="#[payload.statusCode]" errorType="#[payload.error.'type']" errorDetail="#[payload.error.detail]" category="com.puntosingular.soluciones"/>
+		<sps-logger:sps-logger doc:name="Exception Response" doc:id="7994bbff-5733-4ae3-a454-398e667736fd" config-ref="SPS_Logger_Config" targetSystem="Error handling" eventName="EXCEPTION" level="ERROR" correlationId="#[vars.headerAttributes.correlationId]" statusCode="#[payload.statusCode]" errorType="#[payload.error.'type']" errorDetail="#[payload.error.detail]" category="com.puntosingular.soluciones"/>
 	</sub-flow>
 
 

@@ -10,10 +10,10 @@
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	correlationId: message.attributes.headers.correlation_id,&#10;	clientId: message.attributes.headers.client_id,&#10;	clientSecret: message.attributes.headers.client_secret&#10;}]" doc:name="headerAttributes" doc:id="3b2d1d85-b752-4a34-9e90-1abf1fdec4ac" variableName="headerAttributes"/>
-		<set-variable value="AS-music-factory-api-main::apiKitRouter" doc:name="currentFlow" doc:id="23deb1d7-25b3-498f-951f-6ee1e575bc9a" variableName="currentFlow"/>
+        <set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;{&#10;	correlationId: message.attributes.headers.correlation_id,&#10;	clientId: message.attributes.headers.client_id,&#10;	clientSecret: message.attributes.headers.client_secret&#10;}]" doc:name="headerAttributes" doc:id="7a85fc71-b0bd-40fc-b9f0-7496b6d5fa77" variableName="headerAttributes"/>
+		<set-variable value="AS-music-factory-api-main::apiKitRouter" doc:name="currentFlow" doc:id="1ef05605-d967-4d3b-b8e4-21acad4d5a48" variableName="currentFlow"/>
 		<apikit:router config-ref="AS-music-factory-api-config"/>
-		<logger level="INFO" doc:name="Logger" doc:id="251f58fa-1c39-444e-9682-d77c6f805c70" message="#['AS-music-factory-api-main::payload: ' ++ write(payload,'application/json')]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="b37e9349-c039-4a8d-ac28-41feb827345b" message="#['AS-music-factory-api-main::payload: ' ++ write(payload,'application/json')]"/>
     </flow>
     <flow name="AS-music-factory-api-console">
         <http:listener config-ref="http-listener-config" path="/console/*">
