@@ -55,6 +55,17 @@ type artist = {|
 
 ]]></types:shape>
     </types:type>
+    <types:type name="batchReport" format="json">
+      <types:shape format="weave" example="examples/batchReport.json"><![CDATA[%dw 2.0
+
+type batchReport = {|
+  totalRecords: Number {"typeId": "int"}, 
+  failedRecords: Number {"typeId": "int"}, 
+  successfulRecords: Number {"typeId": "int"}
+|} {"example": "{\\\"totalRecords\\\":15,\\\"failedRecords\\\":2,\\\"successfulRecords\\\":13}"}
+
+]]></types:shape>
+    </types:type>
   </types:catalog>
   <types:enrichment select="#4825566f-e742-4370-ab60-bc4122fcbe57">
     <types:processor-declaration>
@@ -93,6 +104,15 @@ type artist = {|
       <types:output-event>
         <types:message>
           <types:payload type="artists"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#ab3942de-955b-4689-a14c-1afcaa68cf60">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="batchReport"/>
         </types:message>
       </types:output-event>
     </types:processor-declaration>

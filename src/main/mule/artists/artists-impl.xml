@@ -137,7 +137,7 @@ output application/json
 			<db:insert doc:name="Insert Artist" doc:id="048f3fa1-7f75-436a-8c1c-d5f2ef03797c" config-ref="mysql-config">
 			<db:sql><![CDATA[INSERT INTO BC_MUSIC_FACTORY.BC_ARTIST 
          (ARTIST_ID, GROUP_NM, FIRST_NM, LAST_NM, MI, BIRTH_DATE, DEATH_DATE, STATUS_CD) 
-         VALUES (NULL, :groupName, :firstName, :lastName, :mi, :birthDate, :deathDate, 'CV')]]></db:sql>
+         VALUES (NULL, :groupName, :firstName, :lastName, :mi, :birthDate, :deathDate, 'AS')]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
     groupName: 	vars.incomingArtist.groupName,
     firstName: 	vars.incomingArtist.firstName,
