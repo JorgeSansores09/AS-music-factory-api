@@ -6,8 +6,9 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="impl-get-songs" doc:id="a6966d10-da13-4ea4-8acd-429c8ccbba2b" >
-		<logger level="INFO" doc:name="INFO START" doc:id="f26aa616-d2db-4d19-aaa8-0441c79a3888" message="impl-get-songs::START"/>
+		<logger level="INFO" doc:name="INFO START" doc:id="f26aa616-d2db-4d19-aaa8-0441c79a3888" message="impl-get-songs::START" category="${logcat}"/>
 		<set-variable value="#[attributes.queryParams.songTitle]" doc:name="songTitle" doc:id="959a8727-4aa7-4078-b960-4b126deba831" variableName="songTitle"/>
+		<logger level="INFO" doc:name="Song Title" doc:id="d1320c36-0908-4d81-9b55-8527f31e59e6" message="#['impl-get-songs::VAR::songTitle:'  ++ write(vars.songTitle, 'application/json')]" category="${logcat}"/>
 		<db:select doc:name="SELECT songs" doc:id="92cb7e4c-f46c-4b0c-a0b5-c059260901a3" config-ref="mysql-config">
 			<db:sql ><![CDATA[SELECT SNG.SONG_ID, SNG.SONG_TITLE, SNG.PUBLICATION_DT, SNG.GENRE, 
 SNG.DURATION,ALB.TITLE AS ALBUM_NM, ART.GROUP_NM, ALB.ALBUM_ID
@@ -21,6 +22,7 @@ WHERE SONG_TITLE LIKE :songTitle]]></db:sql>
 	songTitle: vars.songTitle ++ '%'
 }]]]></db:input-parameters>
 		</db:select>
+		<logger level="INFO" doc:name="Select Songs" doc:id="38a64897-6ad5-465e-8b26-711863f19e7e" message="#['impl-get-songs::SELECT::payload:'  ++ write(payload, 'application/json')]"/>
 		<ee:transform doc:name="Transform Message" doc:id="40e8c7af-7afe-477d-a8af-141a17a7b795" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -45,5 +47,7 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-	</sub-flow>
+		<logger level="INFO" doc:name="INFO END" doc:id="eeb00d45-2544-4694-a96a-af14b8edc59e" message="#['impl-get-songs::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+	
+</sub-flow>
 </mule>

@@ -6,7 +6,8 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="impl-get-catalog" doc:id="41e92ff2-7f08-411b-b88c-8aa1b1db1fbe" >
-		<logger level="INFO" doc:name="INFO START" doc:id="aa0aed88-9ec5-41cc-9784-2c34a333cd75" message="impl-get-catalog::START"/>
+		<logger level="INFO" doc:name="INFO START" doc:id="aa0aed88-9ec5-41cc-9784-2c34a333cd75" message="impl-get-catalog::START" category="${logcat}"/>
+		<logger level="INFO" doc:name="Group Name" doc:id="78e926c6-dbce-4d6e-922d-f7feab81738a" message="#['impl-get-catalog::QUERYPARAM::groupName:'  ++ write(attributes.queryParams.groupName, 'application/json')]" category="${logcat}"/>
 		<db:select doc:name="SELECT CATALOG" doc:id="fc3be228-4714-4e76-9841-21c88b6696b8" config-ref="mysql-config">
 			<db:sql ><![CDATA[SELECT ALBUM.TITLE AS ALBUM_NM, ALBUM.PUBLICATION_DT AS ALBUM_PUBLISH,
 	   SONG.SONG_TITLE, SONG.GENRE AS SONG_GENRE, SONG.DURATION AS SONG_DURATION, 
@@ -23,6 +24,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	groupName: attributes.queryParams.groupName ++ "%"
 }]]]></db:input-parameters>
 		</db:select>
+		<logger level="INFO" doc:name="Select Catalog" doc:id="fc6ae0a7-bb47-48da-b219-7ac0a62945d9" message="#['impl-get-catalog::SELECT::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<ee:transform doc:name="payload" doc:id="2bda0d79-ff02-4fbe-a279-c39d5a6afbd6" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -61,5 +63,7 @@ fun formatDate(d: Date) = d as String {format: "MM/dd/YYYY"}
 } ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-	</sub-flow>
+		<logger level="INFO" doc:name="INFO END" doc:id="be88cb46-1010-4832-bd83-e4b91eeeb4ba" message="#['impl-get-catalog::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+	
+</sub-flow>
 </mule>
