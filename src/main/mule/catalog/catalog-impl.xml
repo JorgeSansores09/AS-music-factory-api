@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:sps-logger="http://www.mulesoft.org/schema/mule/sps-logger" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/sps-logger http://www.mulesoft.org/schema/mule/sps-logger/current/mule-sps-logger.xsd">
 	<sub-flow name="impl-get-catalog" doc:id="41e92ff2-7f08-411b-b88c-8aa1b1db1fbe" >
-		<logger level="INFO" doc:name="INFO START" doc:id="aa0aed88-9ec5-41cc-9784-2c34a333cd75" message="impl-get-catalog::START" category="${logcat}"/>
-		<logger level="INFO" doc:name="Group Name" doc:id="78e926c6-dbce-4d6e-922d-f7feab81738a" message="#['impl-get-catalog::QUERYPARAM::groupName:'  ++ write(attributes.queryParams.groupName, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="87fffb66-b618-4a3f-a7ac-1ecba1f34564" config-ref="SPS_Logger_Config" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-catalog::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="Group Name" doc:id="e030326c-8077-499d-bca9-ebc3df517358" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-catalog::QUERYPARAM::groupName:'  ++ write(attributes.queryParams.groupName, 'application/json')]" category="${logcat}"/>
 		<db:select doc:name="SELECT CATALOG" doc:id="fc3be228-4714-4e76-9841-21c88b6696b8" config-ref="mysql-config">
 			<db:sql ><![CDATA[SELECT ALBUM.TITLE AS ALBUM_NM, ALBUM.PUBLICATION_DT AS ALBUM_PUBLISH,
 	   SONG.SONG_TITLE, SONG.GENRE AS SONG_GENRE, SONG.DURATION AS SONG_DURATION, 
@@ -24,7 +25,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	groupName: attributes.queryParams.groupName ++ "%"
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Select Catalog" doc:id="fc6ae0a7-bb47-48da-b219-7ac0a62945d9" message="#['impl-get-catalog::SELECT::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="Select Catalog" doc:id="1ed957ae-cc20-4dab-b26c-b8320e594fce" config-ref="SPS_Logger_Config" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-catalog::SELECT::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<ee:transform doc:name="payload" doc:id="2bda0d79-ff02-4fbe-a279-c39d5a6afbd6" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -63,7 +64,7 @@ fun formatDate(d: Date) = d as String {format: "MM/dd/YYYY"}
 } ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="INFO END" doc:id="be88cb46-1010-4832-bd83-e4b91eeeb4ba" message="#['impl-get-catalog::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="747fba71-fe28-4b69-b53f-6af5e299f7f1" config-ref="SPS_Logger_Config" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-catalog::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 	
 </sub-flow>
 </mule>

@@ -8,11 +8,11 @@
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
 	<munit:config name="artists-impl-test-suite.xml" />
-	<global-property doc:name="Global Property" doc:id="aa9e0372-7331-4f7b-8c7b-b3fe3ca4c46c" name="test" value="local" />
-	<configuration-properties doc:name="Configuration properties" doc:id="0caca6d9-ab81-4554-9853-e7a4d6b46340" file="properties/${test}.properties" />
-	<munit:test name="sr-get-artist-info-test" doc:id="7ad17b7a-e759-47cc-b99c-e3964bd1af40" description="Test">
+	<global-property doc:name="Global Property" doc:id="a5681e1e-3117-4d29-9734-8d145dc9a383" name="test" value="local" />
+	<configuration-properties doc:name="Configuration properties" doc:id="e6244506-672e-4453-908a-6f2c86631ce2" file="properties/${test}.properties" />
+	<munit:test name="sr-get-artist-info-test" doc:id="bc19e2bb-957c-4e75-97c9-ecc9d24c073a" description="Test">
 		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock when Get Artist HTTP Request" doc:id="80df7ff3-d45b-47da-9c5f-f9c70d3f5457" processor="http:request">
+			<munit-tools:mock-when doc:name="Mock when Get Artist HTTP Request" doc:id="f5aeb5ab-7bc3-4ac0-a563-47985d170c6f" processor="http:request">
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute whereValue="GET" attributeName="method" />
 					<munit-tools:with-attribute whereValue="Get Artist Bio" attributeName="doc:name" />
@@ -23,25 +23,27 @@
 			</munit-tools:mock-when>
 		</munit:behavior>
 		<munit:execution >
-			<munit:set-event doc:id="ffeef370-9285-4b64-88be-8938afde44c7" doc:name="lastFmProperties">
+			<munit:set-event doc:name="Set Event" doc:id="72e6fba9-c51c-462d-84d8-9dc5672d28c9" >
 				<munit:variables >
 					<munit:variable key="lastFmProperties" value="#[{method: p('last.fm.method'), apiKey: p('last.fm.api.key'), format: p('last.fm.format'), artist: 'The Beatles' }]" mediaType="application/java" />
+					<munit:variable key="headerAttributes" value="#[{correlationId: '12345', clientId: '12345', clientSecret: '12345'}]" mediaType="application/java" />
 				</munit:variables>
+
 			</munit:set-event>
-			<flow-ref doc:name="sr-get-artist-info" doc:id="88f25cb1-c39d-4337-a6a3-fbf0c8b56df8" name="sr-get-artist-info"/>
+			<flow-ref doc:name="sr-get-artist-info" doc:id="a6bf744e-abdf-461d-99cb-71fa3d03173f" name="sr-get-artist-info"/>
 		</munit:execution>
-		<munit:validation >
-			<munit-tools:verify-call doc:name="Verify call" doc:id="bf4c7f1e-940b-44fd-a868-0c5a41b9e1d4" processor="http:request" times="#[1]">
+		<munit:validation>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="55e3d2af-33ab-4c7c-9262-3bccdc549ab2" processor="http:request" times="#[1]">
 				<munit-tools:with-attributes >
 					<munit-tools:with-attribute whereValue="GET" attributeName="method" />
 					<munit-tools:with-attribute whereValue="Get Artist Bio" attributeName="doc:name" />
-					<munit-tools:with-attribute whereValue="878b156e-8b8a-4e0f-a64b-d846ea3195f4" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="2e587f2a-1dfd-46f3-85e5-9e94885214cc" attributeName="doc:id" />
 					<munit-tools:with-attribute whereValue="last-fm-http-config" attributeName="config-ref" />
 					<munit-tools:with-attribute whereValue="/${last.fm.version}" attributeName="path" />
 				</munit-tools:with-attributes>
 			</munit-tools:verify-call>
-			<munit-tools:assert-equals doc:name="Assert statusCode is 201" doc:id="5fa03a72-8441-43c8-b9bc-3fb97e91479a" actual="#[payload.statusCode]" expected="201" message="statusCode is 201"/>
-			<munit-tools:assert-that doc:name="Assert that bioUrl found" doc:id="05de5f14-1998-4b3d-ac29-0d83de544dad" message="bioUrl found" expression="#[payload.bioUrl]" is='#[MunitTools::startsWith("https://")]'/>
+			<munit-tools:assert-equals doc:name="Assert statusCode is 201" doc:id="edbcce7c-871d-494f-a0d1-b5c242b28311" actual="#[payload.statusCode]" expected="201" message="statusCode is 201"/>
+			<munit-tools:assert-that doc:name="Assert that bioUrl found" doc:id="7a84251e-1ff2-4449-a63b-6d4f591891a7" expression="#[payload.bioUrl]" is='#[MunitTools::startsWith("https://")]' message="bioUrl failure"/>
 		</munit:validation>
 	</munit:test>
 

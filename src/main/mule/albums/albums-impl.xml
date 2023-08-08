@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:batch="http://www.mulesoft.org/schema/mule/batch" xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:sps-logger="http://www.mulesoft.org/schema/mule/sps-logger" xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd">
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/sps-logger http://www.mulesoft.org/schema/mule/sps-logger/current/mule-sps-logger.xsd">
 	<sub-flow name="impl-get-albums" doc:id="ca1ce191-a3a9-4158-9fd3-1f4b832a8d3b" >
-		<logger level="INFO" doc:name="INFO START" doc:id="7be26306-d63c-4500-9e8f-942e1cd5d698" message="impl-get-albums::START" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="d03053b5-1ac7-41ea-b7a1-513c4b821cf1" config-ref="SPS_Logger_Config" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-albums::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<set-variable value="#[attributes.queryParams.albumTitle]" doc:name="albumTitle" doc:id="557b2ce4-86e3-4049-9181-0dd6f5cb387f" variableName="albumTitle" />
-		<logger level="INFO" doc:name="Album Title" doc:id="60e4c834-df29-4fc7-a57f-7e7f8eb7d9b1" message="#['impl-get-albums::VAR::albumTitle:'  ++ write(vars.albumTitle, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="Album Title" doc:id="4da6935b-de5d-4015-a42a-26ddc2531e67" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-albums::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<db:select doc:name="SELECT albums" doc:id="e01da845-8391-411d-8aa9-668661cbf11e" config-ref="mysql-config">
 			<db:sql><![CDATA[SELECT DISTINCT ALB.ALBUM_ID, ALB.TITLE, ALB.GENRE, ALB.PUBLICATION_DT, 
   ART.GROUP_NM, ART.ARTIST_ID
@@ -23,7 +24,7 @@ http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/ba
   albumTitle: vars.albumTitle ++ '%'
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Select Albums" doc:id="1952332c-f383-427a-8bdc-a13bd3993de5" message="#['impl-get-albums::SELECT::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="SELECT Albums" doc:id="e876f85f-4c69-4dfb-92ba-d41f5c9fe4df" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-albums::SELECT::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<ee:transform doc:name="Transform Message" doc:id="4825566f-e742-4370-ab60-bc4122fcbe57" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -44,11 +45,11 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="INFO END" doc:id="dd60543b-adcd-4679-8d19-3a83cab51dbc" message="#['impl-get-albums::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="97f08b11-fbae-407f-88e4-63f8d602cc5e" config-ref="SPS_Logger_Config" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-albums::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 	</sub-flow>
 	<flow name="impl-add-albums" doc:id="ae5288b5-85c3-4f3b-8f48-95f36681ff19" >
 		<http:listener doc:name="Listener" doc:id="6aff6c94-7a0c-49c2-9689-7d9b1f24b060" config-ref="http-listener-config" path="/batchAddAlbums"/>
-		<logger level="INFO" doc:name="INFO START" doc:id="d0a1f70f-20be-4370-a21f-fe192ab49e9d" message="#['impl-add-albums::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="efb6ce88-ca92-43e8-866b-419a571a8e01" config-ref="SPS_Logger_Config" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<ee:transform doc:name="Transform Message" doc:id="51eadca9-fa65-4d5a-9879-89affee8006d" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -57,15 +58,17 @@ output application/json
 payload.albums]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<sps-logger:sps-logger doc:name="After Transform" doc:id="0dda1462-b939-48bb-bcdf-9d33e977d923" config-ref="SPS_Logger_Config" eventName="AFTER TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::Transform: '  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<set-variable value="#[sizeOf(payload)]" doc:name="numberOfAlbums" doc:id="3a5d308e-fd45-437e-9673-3ad12e70a7fe" variableName="numberOfAlbums"/>
-		<logger level="INFO" doc:name="Number of Albums" doc:id="e8c4d25e-2fcd-4851-8a69-21468d38e898" message="#['impl-add-albums::VAR::numberOfAlbums:'  ++ write(vars.numberOfAlbums, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="Number of Albums" doc:id="fa6a3027-ad53-468c-a12f-37cc4ba5583a" config-ref="SPS_Logger_Config" level="WARN" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::numberOfAlbums: '  ++ write(vars.numberOfAlbums, 'application/json')]" category=" ${logcat}"/>
 		<batch:job jobName="impl-add-albums-batch-job" doc:id="7c22738c-c747-47d5-ab93-08049f8663f4" maxFailedRecords="10">
 			<batch:process-records >
 				<batch:step name="process-all-records" doc:id="8febf7de-0db9-4e92-a613-e3598d50cc8f" >
+					<sps-logger:sps-logger doc:name="Batch Start" doc:id="8affbf17-ce7f-4407-bc53-f3e99e38413e" config-ref="SPS_Logger_Config" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::Batch::Start: '  ++ write(payload, 'application/json')]" category="${logcat}"/>
 					<set-payload value='#[%dw 2.0&#10;output application/java&#10;---&#10;{&#10;		albumIdParam: 		0,&#10;		titleParam: 		payload.albumTitle,&#10;		genreParam: 		payload.genre,&#10;		publicationParam: 	payload.publicationDate,&#10;		statusParam: 	"as",&#10;		artistIdParam: 	payload.artistId&#10;}]' doc:name="Insert payload" doc:id="8953f9c4-6de9-4461-88e4-8bf88ad6b65e" />
-					<logger level="DEBUG" doc:name="payload" doc:id="a39e49f0-584b-491a-a469-06e768180daf" message="#['impl-add-albums::BATCH::ProcessAllRecords:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+					<sps-logger:sps-logger doc:name="Insert Payload" doc:id="a20553d1-8adc-45fa-9982-285618d6db60" config-ref="SPS_Logger_Config" eventName="AFTER TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::Batch::payload: '  ++ write(payload, 'application/json')]" category="${logcat}"/>
 					<batch:aggregator doc:name="bulk-insert-albums" doc:id="7ca0cad1-5d32-4998-a0d9-19bc79a545dd" size="3">
-						<logger level="DEBUG" doc:name="BULK START" doc:id="858d11d0-2a1f-460d-bff0-b55d8c05c9a7" message="#['impl-add-albums::BULKSTART::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+						<sps-logger:sps-logger doc:name="BULK Start" doc:id="4c3868cb-4ad8-4a58-b2d8-6466f15b50b2" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::BulkStart::payload: '  ++ write(payload, 'application/json')]" category="${logcat}"/>
 						<db:bulk-insert doc:name="Bulk insert Album" doc:id="673e469e-6d74-456f-ac99-da4f95821731" config-ref="mysql-config">
 							<db:sql ><![CDATA[insert into BC_MUSIC_FACTORY.BC_ALBUM 
    (album_id,title, genre, publication_dt, status_cd, artist_id) values
@@ -76,11 +79,11 @@ payload.albums]]></ee:set-payload>
         :statusParam,
         :artistIdParam)]]></db:sql>
 						</db:bulk-insert>
-						<logger level="DEBUG" doc:name="BULK END" doc:id="b74d90e6-25f7-48f3-87aa-c4e31eece919" message="#['impl-add-albums::BULKEND::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+						<sps-logger:sps-logger doc:name="After the Bulk Insert" doc:id="0a94ec14-e72c-458d-b225-23aa412be5fa" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::BulkEnd::payload: '  ++ write(payload, 'application/json')]" category="${logcat}"/>
 					</batch:aggregator>
 				</batch:step>
 				<batch:step name="failures-only-step" doc:id="ea1eb270-b962-4834-8faa-def0ae0987f9" acceptPolicy="ONLY_FAILURES">
-					<logger level="WARN" doc:name="Failure" doc:id="45da4fd9-8c43-4080-b018-50605dceceba" message="#['impl-add-albums::BATCH::FailuresOnlyStep:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+					<sps-logger:sps-logger doc:name="Failure" doc:id="956b4445-95d7-48ee-8d41-15162bdbef5c" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="BEFORE REQUEST" level="WARN" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::Batch::FailuresOnlyStep:'  ++ write(payload, 'application/json')]" category=" ${logcat}"/>
 					<db:insert doc:name="Record Album Title as Error" doc:id="ce5b5963-d3c2-403c-a237-967f7c5b1d79" config-ref="mysql-config">
 						<db:sql ><![CDATA[INSERT INTO BC_MUSIC_FACTORY.BC_STAGING_ERROR (STAGING_ID, STAGING_RECORD, STATUS_CD) 
     VALUES (NULL, :stagingRecord, 'AS')]]></db:sql>
@@ -89,10 +92,11 @@ payload.albums]]></ee:set-payload>
     statusParam: payload.statusParam as String
 }]]]></db:input-parameters>
 					</db:insert>
-					<logger level="WARN" doc:name="INSERT Failure" doc:id="0a24583f-20eb-492a-881f-5f31135cc67c" message="#['impl-add-albums::BATCH::InsertFailure:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+					<sps-logger:sps-logger doc:name=" Insert Failure" doc:id="373ada6f-99f1-4375-b614-05a42acd00a4" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="AFTER REQUEST" level="WARN" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::Batch::InsertFailure: '  ++ write(payload, 'application/json')]" category="${logcat}"/>
 				</batch:step>
 			</batch:process-records>
 			<batch:on-complete >
+				<sps-logger:sps-logger doc:name="Before Transform" doc:id="c9dab5f1-d8b4-436a-8880-512bf4024015" config-ref="SPS_Logger_Config" eventName="BEFORE TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::OnComplete::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 				<ee:transform doc:name="Transform Message" doc:id="ab3942de-955b-4689-a14c-1afcaa68cf60" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
@@ -110,10 +114,9 @@ var batchSummary = payload
 					</ee:message>
 					<ee:variables />
 				</ee:transform>
-				<logger level="INFO" doc:name="On Complete" doc:id="21dbd1ce-e416-4dd4-88cd-9beb0904607a" message="#['impl-add-albums::END::OnComplete:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+				<sps-logger:sps-logger doc:name="INFO END" doc:id="1f2e289f-101d-4d16-8d83-677edf306266" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-albums::OnComplete::End:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 			</batch:on-complete>
 		</batch:job>
-		<logger level="INFO" doc:name="Logger" doc:id="3128b888-7fee-4602-bc89-8a99332b1af6" message="FINISH IMPL-ADD-ALBUMS"/>
 	</flow>
 	
 </mule>

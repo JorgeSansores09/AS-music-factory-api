@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:sps-logger="http://www.mulesoft.org/schema/mule/sps-logger" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/sps-logger http://www.mulesoft.org/schema/mule/sps-logger/current/mule-sps-logger.xsd">
 	<sub-flow name="impl-get-songs" doc:id="a6966d10-da13-4ea4-8acd-429c8ccbba2b" >
-		<logger level="INFO" doc:name="INFO START" doc:id="f26aa616-d2db-4d19-aaa8-0441c79a3888" message="impl-get-songs::START" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="c0f66afd-7f95-4527-b9fb-c58da7fbf8fc" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-songs::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 		<set-variable value="#[attributes.queryParams.songTitle]" doc:name="songTitle" doc:id="959a8727-4aa7-4078-b960-4b126deba831" variableName="songTitle"/>
-		<logger level="INFO" doc:name="Song Title" doc:id="d1320c36-0908-4d81-9b55-8527f31e59e6" message="#['impl-get-songs::VAR::songTitle:'  ++ write(vars.songTitle, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="Song Title" doc:id="0a25f2b9-e0ca-4172-8951-5d7af749fe5e" config-ref="SPS_Logger_Config" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-songs::Var::SongTitle:'  ++ write(vars.songTitle, 'application/json')]" category="${logcat}"/>
 		<db:select doc:name="SELECT songs" doc:id="92cb7e4c-f46c-4b0c-a0b5-c059260901a3" config-ref="mysql-config">
 			<db:sql ><![CDATA[SELECT SNG.SONG_ID, SNG.SONG_TITLE, SNG.PUBLICATION_DT, SNG.GENRE, 
 SNG.DURATION,ALB.TITLE AS ALBUM_NM, ART.GROUP_NM, ALB.ALBUM_ID
@@ -22,7 +23,7 @@ WHERE SONG_TITLE LIKE :songTitle]]></db:sql>
 	songTitle: vars.songTitle ++ '%'
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Select Songs" doc:id="38a64897-6ad5-465e-8b26-711863f19e7e" message="#['impl-get-songs::SELECT::payload:'  ++ write(payload, 'application/json')]"/>
+		<sps-logger:sps-logger doc:name="Select Songs" doc:id="b98d46df-ba75-4d84-a44c-2aa832e28c72" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-songs::SELECT::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<ee:transform doc:name="Transform Message" doc:id="40e8c7af-7afe-477d-a8af-141a17a7b795" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -47,7 +48,7 @@ output application/json
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="INFO END" doc:id="eeb00d45-2544-4694-a96a-af14b8edc59e" message="#['impl-get-songs::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="d6f8fbd5-d66e-4df4-92b4-08c5bdb3a1cc" config-ref="SPS_Logger_Config" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-songs::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 	
 </sub-flow>
 </mule>

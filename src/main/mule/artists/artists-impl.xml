@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:sps-logger="http://www.mulesoft.org/schema/mule/sps-logger" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/sps-logger http://www.mulesoft.org/schema/mule/sps-logger/current/mule-sps-logger.xsd">
 	<sub-flow name="impl-get-artists" doc:id="0a0b9d87-b2d2-4dc2-b604-2828b91cf429" >
-		<logger level="INFO" doc:name="INFO START" doc:id="6f34058b-6938-4fda-ac7b-6c6348aeef66" message="#['impl-get-artists::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="90b46d89-970c-4386-894e-c215101700b5" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-artists::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 		<flow-ref doc:name="sr-build-query-param-list" doc:id="e01425aa-e093-4de9-a037-240f748f5789" name="sr-build-query-param-list" target="queryParamList" targetValue="#[message.payload]"/>
+		<sps-logger:sps-logger doc:name="Select Artists" doc:id="986afc97-15de-4d87-8383-4cf52ea906a3" config-ref="SPS_Logger_Config" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-artists::payload: '  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<flow-ref doc:name="sr-select-artists" doc:id="47da8926-3173-401b-af3a-0d864896d8bd" name="sr-select-artists"/>
-		<logger level="INFO" doc:name="INFO END" doc:id="b1581539-c080-4a14-a041-ec524ae10f55" message="#['impl-get-artists::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="188cbc31-bd63-4de5-93f3-61de29038ea7" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-get-artists::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 	</sub-flow>
 	<sub-flow name="sr-select-artists" doc:id="36ff73a2-d4e0-48f6-8c4f-1982d0092b99" >
-		<logger level="INFO" doc:name="INFO START" doc:id="d2f92de7-f502-410e-a4c7-2fd682d78d7a" message="#['sr-select-artists::START::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="9df36ea6-61e8-419f-ac02-007cf1df274e" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-select-artists::START::payload:'  ++ write(payload, 'application/json')]" category=" ${logcat}" config-ref="SPS_Logger_Config"/>
 		<set-variable value="#[%dw 2.0&#10;   output application/java&#10;---&#10;(&quot;1=1&quot;&#10;	++ (if(vars.queryParamList.lastName != null) &quot; AND lower(LAST_NM) LIKE concat(lower(:lastName),'%')&quot; else &quot;&quot;)&#10;    ++ (if(vars.queryParamList.firstName != null) &quot; AND lower(FIRST_NM) LIKE concat(lower(:firstName),'%')&quot; else &quot;&quot;)&#10;    ++ (if(vars.queryParamList.groupName != null) &quot; AND lower(GROUP_NM) LIKE concat(lower(:groupName),'%')&quot; else &quot;&quot;)&#10;    ++ (if(vars.queryParamList.dateOfBirth != null) &quot; AND BIRTH_DATE = :dateOfBirth&quot; else &quot;&quot;)&#10;) as String]" doc:name="whereClause" doc:id="5ee8df8e-3bef-4cf7-a4fa-44ea3c778fb9" variableName="whereClause"/>
-		<logger level="INFO" doc:name="Where Clause" doc:id="aa7ce91e-b2f3-463d-bad5-017403b9b8c6" message="#['sr-select-artists::VAR::whereClause: ' ++ write(vars.whereClause,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="Where Clause" doc:id="2707ce7a-36d7-4d34-98e7-d95721fe8498" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-select-artists::VAR::whereClause: ' ++ write(vars.whereClause,'application/json')]" category="${logcat}"/>
 		<db:select doc:name="Select" doc:id="660239c0-1aed-4ce4-bb20-20f721ea6794" config-ref="mysql-config" >
 			<db:sql ><![CDATA[#["SELECT ARTIST_ID, GROUP_NM, FIRST_NM, LAST_NM, BIRTH_DATE, MI, DEATH_DATE 	
     FROM BC_ARTIST 
@@ -24,7 +26,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 ]]></db:sql>
 			<db:input-parameters ><![CDATA[#[vars.queryParamList]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Select Artist" doc:id="c736c3b2-5d52-4b7f-906b-423e0e738778" message="#['sr-select-artists::SELECT::artist: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="Select Artist" doc:id="8e95a6f6-29ce-4782-9b11-5193bfee5c3d" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-select-artists::Select::payload: ' ++ write(payload, &quot;application/json&quot;)]" category="${logcat}"/>
 		<ee:transform doc:name="Transform Message" doc:id="608399b7-8e98-419d-a08c-329280e72ed0" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -52,10 +54,10 @@ output application/json
     ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="INFO END" doc:id="9656f045-78b5-4748-9814-ec3ae17d398f" message="#['sr-select-artists::END::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="fb18da5f-e782-4913-983b-1726aa36636b" config-ref="SPS_Logger_Config" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-select-artists::END::payload: ' ++ write(payload, &quot;application/json&quot;)]" category="${logcat}"/>
 	</sub-flow>
 	<sub-flow name="sr-build-query-param-list" doc:id="f31f47a1-963e-4f60-bfdf-90a1d23e9223" >
-		<logger level="INFO" doc:name="INFO START" doc:id="69f180c9-2e1a-4469-a53d-e6e558b96001" message="#['sr-build-query-param-list::START::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="02785523-556d-4e76-a93f-450d55f62b7b" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-build-query-param-list::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 		<ee:transform doc:name="queryParams" doc:id="bd879ae3-2322-4928-a77c-a6c670e72f12" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -70,10 +72,10 @@ output application/java
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="INFO END" doc:id="18ee8f40-ea53-4aa5-b4c0-9254665d58d0" message="#['sr-build-query-param-list::END::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="c1b9a5b4-b9b2-4db1-9152-1db12b3c0543" config-ref="SPS_Logger_Config" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-build-query-param-list::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 	</sub-flow>
 	<sub-flow name="impl-add-artists" doc:id="5b49853b-0d72-46d7-9052-cc4ab38c48a8" >
-		<logger level="INFO" doc:name="INFO size of" doc:id="7b34b994-20a6-4ef7-a1bf-01cac715c572" message="#['impl-add-artists::START::sizeOf payload: '  ++ sizeOf(payload.artists)]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="70da264e-0060-4aa8-bd03-0f384db4b2bd" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 		<ee:transform doc:name="artists, artistsOut, artistsFound" doc:id="e1ddc0ce-6730-493a-8135-53ae9c4f690e" >
 			<ee:message >
 			</ee:message>
@@ -92,22 +94,28 @@ output application/json
 message.payload.artists]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
+		<sps-logger:sps-logger doc:name="Artists" doc:id="a7a1edd6-e3dc-467c-bf2e-006dd784dc6c" config-ref="SPS_Logger_Config" eventName="AFTER TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<foreach doc:name="For Each Artist" doc:id="9312e8c0-b9ac-4444-aa76-186f28f9528c" collection="#[vars.artists]">
-			<logger level="INFO" doc:name="Payload artist" doc:id="872b2ec4-709c-4344-99e5-6f2d0cf04c22" message="#['impl-add-artists::ForEach::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+			<sps-logger:sps-logger doc:name="Artist" doc:id="fc68e595-e5de-4d9a-8483-ead006478038" config-ref="SPS_Logger_Config" eventName="BEFORE TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::ForEach::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 			<set-payload doc:name="Artist" doc:id="506d5dac-2ae6-4acb-af8d-0270f6ddf86d" value="#[output application/json&#10;---&#10;{&#10;	artist:{&#10;		artistId: payload.aristId,&#10;		groupName: payload.groupName,&#10;		lastName: payload.lastName,&#10;		firstName: payload.firstName,&#10;		mi: payload.mi,&#10;		dateOfBirth: payload.dateOfBirth,&#10;		dateOfDeath: payload.dateOfDeath	&#10;	}&#10;}]"/>
-			<logger level="INFO" doc:name="artist" doc:id="493d714d-2149-4e28-98b8-01f8623cf6ad" message="#['impl-add-artists::ForEach::artist: ' ++ write(payload, 'application/json')]" category="${logcat}"/>
+			<sps-logger:sps-logger doc:name="Modified Artist" doc:id="303275c0-c233-4439-b374-705c8d0de780" config-ref="SPS_Logger_Config" eventName="AFTER TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::ForEach::Artist:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 			<flow-ref doc:name="sr-find-duplicate-artist" doc:id="6b8b5731-9a6f-4940-9f59-f01f351e5425" name="sr-find-duplicate-artist" target="getArtistResponse"/>
+			<sps-logger:sps-logger doc:name="Modified Artist" doc:id="39483914-509c-4707-97a2-093d97fe6189" config-ref="SPS_Logger_Config" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::ForEach::Artist:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 			<choice doc:name="Artist Found?" doc:id="5b93616e-fdec-4bd6-bdfe-75631baaea47" >
 				<when expression="#[vars.getArtistResponse.artists[0]==null]">
+					<sps-logger:sps-logger doc:name="Modified Artist" doc:id="0a786165-a19d-4b29-9a6f-10dee16c2c3b" config-ref="SPS_Logger_Config" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::ForEachChoice::Artist:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 					<flow-ref doc:name="sr-insert-Artist" doc:id="2b0129a8-55c1-459d-a774-1061d6946fa8" name="sr-insert-Artist" target="newArtist" />
+					<sps-logger:sps-logger doc:name="Insert Artist" doc:id="2905bc7f-b9ed-4c33-9dda-5a8c024076d4" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::ForEachChoice::Artist:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 					<set-variable value="#[%dw 2.0&#10;output application/java&#10;---&#10;vars.artistsOut + vars.newArtist]" doc:name="append artistsOut" doc:id="d1ab4e08-9574-4442-9dfe-8c5d0dab1a50" variableName="artistsOut" />
-					<logger level="INFO" doc:name="artistOut" doc:id="0845fc11-5059-40e9-9655-49f3be2c9464" message="#['impl-add-artists::ForEach::Choice::artistsOut: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+					<sps-logger:sps-logger doc:name="artistOut" doc:id="e7853229-4cb9-446d-bd13-bd704000ff61" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::ForEachChoice::Artist:'  ++ write(vars.artistsOut, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 				</when>
 				<otherwise >
 					<set-variable value="#[%dw 2.0&#10;output application/json&#10;---&#10;	vars.artistsFound + vars.getArtistResponse.artists[0]]" doc:name="append artistFound" doc:id="122dea8f-16a5-4e94-af95-13f845516d3d" variableName="artistsFound"/>
+					<sps-logger:sps-logger doc:name="artistFound" doc:id="342c3f98-e816-4f9d-9c19-419402f492c8" config-ref="SPS_Logger_Config" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::ForEachChoice::Artist:'  ++ write(vars.artistsFound, 'application/json')]" category="${logcat}"/>
 				</otherwise>
 			</choice>
 		</foreach>
+		<sps-logger:sps-logger doc:name="Artists Payload" doc:id="59fe6b19-37d5-4704-b42a-f48d6ca1b945" config-ref="SPS_Logger_Config" eventName="BEFORE TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::Artist:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<ee:transform doc:name="Transform Message" doc:id="d5fbfb88-4856-414e-b05e-fbfc34585963" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -126,20 +134,21 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="INFO END" doc:id="1a7b28e7-05d4-4513-a7bf-c82337ac78c6" message="#['impl-add-artists::END::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="2fc81527-5b44-47f3-84f7-5951750a0268" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-add-artists::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 	</sub-flow>
 	<sub-flow name="sr-find-duplicate-artist" doc:id="d9973e15-e99a-4702-8234-18865f4fabb0" >
-		<logger level="INFO" doc:name="INFO START" doc:id="b06c51c4-cd4e-4d86-a1e1-fc5dfc061a02" message="#['sr-find-duplicate-artist::START::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="594db3ab-c5a9-4a56-b0d3-6506615efd53" config-ref="SPS_Logger_Config" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-find-duplicate-artist::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<set-variable value="#[%dw 2.0&#10;output application/java&#10;var artist = message.payload.artist&#10;---&#10;{&#10;    groupName: 	artist.groupName,&#10;    firstName: 	artist.firstName,&#10;    lastName:     artist.lastName,&#10;    dateOfBirth:  artist.dateOfBirth&#10;  }]" doc:name="queryParamList" doc:id="19ed33f2-bcf0-472f-a0f7-7b7b8f389bdb" variableName="queryParamList"/>
-		<logger level="INFO" doc:name="DEBUG queryParamList" doc:id="a9526cd4-3b85-4c51-82db-4b1563dd6508" message="#['sr-find-duplicate-artist::queryParamList' ++ write(vars.queryParamList,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="queryParamList" doc:id="02f2bf3c-7755-4891-9dc5-471640cc1dd2" config-ref="SPS_Logger_Config" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-find-duplicate-artist::VAR::queryParamList:'  ++ write(vars.queryParamList, 'application/json')]" category="${logcat}"/>
 		<flow-ref doc:name="sr-select-artist" doc:id="5cb91dfe-5c53-4347-844b-bf7bbe7808f4" name="sr-select-artists"/>
-		<logger level="INFO" doc:name="INFO Size of" doc:id="c34cc526-0f16-4c61-b947-aadb15fac474" message="#['sr-find-duplicate-artist' ++ sizeOf(payload.artists)]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO sizeOf" doc:id="a8d88e47-75fc-47e2-b471-4fb1850dff52" config-ref="SPS_Logger_Config" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-find-duplicate-artist::SizeOfPayload: '  ++ sizeOf(payload.artists)]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="c818584a-1379-4e1c-9ee3-aef4bc4f2ed4" config-ref="SPS_Logger_Config" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-find-duplicate-artist::END::payload:'  ++ write(payload, 'application/json')]" errorType='if (error != null) error.errorType.identifier else "No Exception"' errorDetail='if (error != null) error.description else "No Exception"' category="${logcat}"/>
 	</sub-flow>
 	<sub-flow name="sr-insert-Artist" doc:id="21d44232-6d43-464f-b1a9-0ba0c2d8417f" >
-		<logger level="INFO" doc:name="INFO START payload" doc:id="51a8840d-58b5-4dc6-953d-3060ebd84a77" message="#['sr-insert-artist::START::artist: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="3d3c3475-5363-44be-a580-304ba0a47378" config-ref="SPS_Logger_Config" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-insert-Artist::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<set-variable value="#[message.payload.artist]" doc:name="incomingArtist" doc:id="96b7e269-0248-469e-aa70-6ab733985b31" variableName="incomingArtist"/>
 		<try doc:name="Try" doc:id="676ac3f1-43d2-4876-8ddd-f1afe661525f" >
-			<logger level="INFO" doc:name="Incoming Artist" doc:id="0fc68071-9046-4a33-a155-07ca2720a2c4" message="#['sr-insert-artist::VAR::incomingArtist: ' ++ write(vars.incomingArtist,'application/json')]" category="${logcat}"/>
+			<sps-logger:sps-logger doc:name="Incoming Artist" doc:id="4d8fffd0-bd89-436c-ac6e-61e7fbd25ee3" config-ref="SPS_Logger_Config" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-insert-artist::Try::incomingArtist:'  ++ write(vars.incomingArtist, 'application/json')]" category="${logcat}"/>
 			<db:insert doc:name="Insert Artist" doc:id="048f3fa1-7f75-436a-8c1c-d5f2ef03797c" config-ref="mysql-config">
 			<db:sql><![CDATA[INSERT INTO BC_MUSIC_FACTORY.BC_ARTIST 
          (ARTIST_ID, GROUP_NM, FIRST_NM, LAST_NM, MI, BIRTH_DATE, DEATH_DATE, STATUS_CD) 
@@ -153,7 +162,7 @@ output application/json
     deathDate: 	vars.incomingArtist.dateOfDeath
 }]]]></db:input-parameters>
 		</db:insert>
-			<logger level="INFO" doc:name="Artist" doc:id="5715bcab-c2f0-45bd-8570-e32d914e6a4b" message="#['sr-insert-artist::INSERT::Artist: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+			<sps-logger:sps-logger doc:name="Artist" doc:id="71638d4c-fbc6-47ac-afbd-84e22d5ca57b" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-insert-artist::Try::Artist:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 			<db:select doc:name="Select Insert" doc:id="a4f4a459-ec79-4bec-aea8-67977151c86f" config-ref="mysql-config" target="newArtistId">
 			<db:sql><![CDATA[SELECT MAX(artist_id) AS artist_id from BC_MUSIC_FACTORY.BC_ARTIST
     WHERE GROUP_NM = :groupName 
@@ -168,28 +177,34 @@ output application/json
     birthDate: 	vars.incomingArtist.dateOfBirth
 }]]]></db:input-parameters>
 		</db:select>
+			<sps-logger:sps-logger doc:name="Select Insert" doc:id="2c2bc10b-6c6d-4dc0-bc65-43a6a008704a" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-insert-artist::Try::Artist:' ++ write(payload, 'application/json')]" category="${logcat}"/>
+			<sps-logger:sps-logger doc:name="Update Payload" doc:id="24a153e0-e4fa-45b9-b573-bf7a69519c03" config-ref="SPS_Logger_Config" eventName="AFTER TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-insert-artist::Try::Artist:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 			<set-payload value="#[output application/java&#10;var artist = vars.incomingArtist&#10;var newArtistId = vars.newArtistId[0].artist_id default 0&#10;---&#10;{&#10;	artistId: 	newArtistId,&#10;	groupName: 	artist.groupName,&#10;	lastName: 	artist.lastName,&#10;	firstName: 	artist.firstName,&#10;	mi:       	artist.mi,&#10;	dateOfBirth: 	artist.dateOfBirth,&#10;	dateOfDeath:	artist.dateOfDeath&#10;}]" doc:name="Update the payload inserted" doc:id="865ae9e3-7352-4d8d-a025-d7bbb8c17cbc" />
 			<error-handler >
 				<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="0868f545-2aa2-49b5-8098-eac21c0e4d67" type="DB:QUERY_EXECUTION">
-					<logger level="INFO" doc:name="ERROR" doc:id="862b7b44-40ce-483b-adb1-f944cbaa437a" message="#['sr-insert-artist::OnErrorPropagate::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+					<sps-logger:sps-logger doc:name="Error" doc:id="46b0c314-e7bd-435e-99b6-1f9229fc86db" config-ref="SPS_Logger_Config" eventName="EXCEPTION" level="ERROR" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-insert-artist::Try::OnErrorPropagate:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 				</on-error-propagate>
 				<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="bc155bdd-97d3-4a34-a816-9f313f7a38bf" type="EXPRESSION">
-					<logger level="INFO" doc:name="ERROR" doc:id="e9dc36e0-e40f-4eee-ac20-95bed043a298" message="#['sr-insert-artist::OnErrorContinue::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+					<sps-logger:sps-logger doc:name="Error" doc:id="6ae65b13-675d-4f3b-b00d-a6b9b656ef57" config-ref="SPS_Logger_Config" eventName="EXCEPTION" level="ERROR" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-insert-artist::Try::OnErrorContinue:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 				</on-error-continue>
 			</error-handler>
 		</try>
-		<logger level="INFO" doc:name="INFO END payload" doc:id="ce2dc8fd-c6c5-4598-ba16-a15276c83544" message="#['sr-insert-artist::END:payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="9bb33cbc-299d-4b1d-b820-66b158ea6bc6" config-ref="SPS_Logger_Config" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-insert-artist::END::payload:'  ++ write(payload, 'application/json')]" errorType='if (error != null) error.errorType.identifier else "No Exception"' errorDetail='if (error != null) error.description else "No Exception"' category="${logcat}" />
 	</sub-flow>
 	<sub-flow name="impl-update-artist-urls" doc:id="af5c32b8-c522-4fc0-9031-290fdc775d14" >
-		<logger level="INFO" doc:name="INFO START" doc:id="3867884c-01f2-4d86-b586-4d4801bd24bb" message="#['impl-update-artist-urls::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="852dac16-ac7e-44cf-9ab6-950ac2107a64" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-update-artist-urls::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" />
 		<set-variable value="#[%dw 2.0&#10;import p from Mule&#10;&#10;output application/java&#10;---&#10;{&#10;	method: p('last.fm.method'),&#10;	apiKey: p('last.fm.api.key'),&#10;	format: p('last.fm.format'),&#10;	artist: payload.groupName&#10;}]" doc:name="lastFmProperties" doc:id="d4373cf3-5b81-45cf-a0f4-882e2e21d1db" variableName="lastFmProperties"/>
+		<sps-logger:sps-logger doc:name="lastFmProperties" doc:id="10347097-5756-4cfc-aa36-3e5b8379895e" config-ref="SPS_Logger_Config" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-update-artist-urls::Var::lastFmProperties:' ++ write(vars.lastFmProperties, 'application/json')]" category="${logcat}"/>
 		<flow-ref doc:name="sr-get-artist-info" doc:id="d1578259-1d5d-41b8-a3a7-a896abd8da59" name="sr-get-artist-info" target="lastFmResponse"/>
+		<sps-logger:sps-logger doc:name="Artist Info" doc:id="134aeaa8-22a2-4683-8d5e-2594182809ec" config-ref="SPS_Logger_Config" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-update-artist-urls::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<choice doc:name="Artist Found?" doc:id="92fa3f64-d48a-424e-a88b-aafe14e61903" >
 			<when expression='#[vars.lastFmResponse.statusCode=="201"]'>
-				<logger level="INFO" doc:name="Placeholder" doc:id="012baf49-af7b-436c-b0b8-990e465b147f" message="#['impl-update-artists-urls::Choice::Placehoder::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+				<sps-logger:sps-logger doc:name="Artist" doc:id="c2dad904-3d4b-4f17-a32b-b1cf588f5abb" config-ref="SPS_Logger_Config" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-update-artist-urls::Choice::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 				<flow-ref doc:name="sr-patch-artist" doc:id="4cd22d73-d391-4d7b-8c3d-d637d84abd19" name="sr-patch-artist"/>
+				<sps-logger:sps-logger doc:name="Patch Artist" doc:id="c455a922-4c39-437b-bb7b-991dbb5e57eb" config-ref="SPS_Logger_Config" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-update-artist-urls::Choice::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 			</when>
 			<otherwise >
+				<sps-logger:sps-logger doc:name="Artist" doc:id="beedd877-10d1-47bd-8385-1ab48bd74776" config-ref="SPS_Logger_Config" eventName="BEFORE TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-update-artist-urls::Choice::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 				<ee:transform doc:name="NOT FOUND RESPONSE" doc:id="bb9e7ed9-dbf0-402f-ba48-8691836d9d66" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
@@ -199,12 +214,13 @@ vars.lastFmResponse
 ]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
+				<sps-logger:sps-logger doc:name="NOT FOUND" doc:id="3da7b30a-9364-4b31-aa95-4eb04d671e61" config-ref="SPS_Logger_Config" eventName="AFTER TRANSFORM" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-update-artist-urls::Choice::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 			</otherwise>
 		</choice>
-		<logger level="INFO" doc:name="INFO FINAL RESPONSE" doc:id="f77d280b-3844-463d-a49c-6773c7726a8b" message="#['impl-update-artists-urls::FinalResponse::payload: ' ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="9999ea43-3f06-44df-9876-22d04bdc3ac1" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['impl-update-artist-urls::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 	</sub-flow>
 	<sub-flow name="sr-get-artist-info" doc:id="068bcd6e-5f56-4095-8d0c-6a76b24b2dee" >
-		<logger level="INFO" doc:name="INFO START" doc:id="2e6d2758-115c-4a50-80eb-0fd70af2496c" message="#['sr-get-artist-info::START::payload: ' ++ write(payload, 'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="c30b1f79-fc2f-4d37-ad94-27a996632195" config-ref="SPS_Logger_Config" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-get-artist-info::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" />
 		<http:request method="GET" doc:name="Get Artist Bio" doc:id="1be0837c-1e02-4180-83e0-404df4ecbbb9" config-ref="last-fm-http-config" path="/${last.fm.version}" >
 			<http:query-params ><![CDATA[#[{
 	"method": vars.lastFmProperties.method,
@@ -213,7 +229,7 @@ vars.lastFmResponse
 	"format": vars.lastFmProperties.format
 }]]]></http:query-params>
 		</http:request>
-		<logger level="INFO" doc:name="Debug Get Response" doc:id="f7c838e4-3da1-4717-a391-cda3107f2044" message="#['impl-update-artists-urls::DEBUG:payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="Artist Bio" doc:id="a109ad61-ea77-498b-b93b-3602b652dc65" config-ref="SPS_Logger_Config" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-get-artist-info::Request::payload:' ++ write(payload, 'application/json')]" statusCode="#[if(payload.artist.bio.content==null) p('http.get.status.nf') else p('http.get.status.ok')]" category=" ${logcat}"/>
 		<ee:transform doc:name="payload" doc:id="cac75eaa-380b-42f3-a847-b3ce52430af6" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -232,12 +248,12 @@ bioUrl: if(payload.artist.bio.content != null) (	payload.artist.bio.links.link.h
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="INFO END" doc:id="99591852-0313-47dc-af61-3e2247dff3df" message="#['sr-get-artist-info::END::payload:' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="71cd01f6-1c7d-46de-acf3-85666616ff76" eventName="END" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-get-artist-info::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" config-ref="SPS_Logger_Config"/>
 	</sub-flow>
 	<sub-flow name="sr-patch-artist" doc:id="2cc1983d-0a8e-4ee2-a36e-ad5bf0ed659c" >
-		<logger level="INFO" doc:name="INFO START " doc:id="6c1a740f-14c2-499d-9841-6e961b6355e6" message="#['sr-patch-artist::START::lastFmResponse: ' ++ write(vars.lastFmResponse,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="6edc7b36-c2c0-4c5e-a71a-c8f802be3f1c" config-ref="SPS_Logger_Config" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-patch-artist::START::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" />
 		<set-variable value="#[vars.lastFmResponse.bioUrl]" doc:name="bioUrl" doc:id="f83053e5-7307-427c-bb09-ed62ed540eed" variableName="bioUrl"/>
-		<logger level="INFO" doc:name="bioUrl" doc:id="cea35ba8-8c6b-4135-a308-e3a77b8f727a" message="#['sr-patch-artist::VAR::bioUrl: ' ++ write(vars.bioUrl,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="bioUrl" doc:id="a37685e5-8d5e-46e7-9535-35ec087d7d8f" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="BEFORE REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-patch-artist::Update::payload:' ++ write(vars.bioUrl, 'application/json')]" category="${logcat}"/>
 		<db:update doc:name="Update Artist" doc:id="de43fa82-89e0-49a5-8375-4438362bc9db" config-ref="mysql-config">
 			<db:sql ><![CDATA[UPDATE BC_ARTIST
   SET bio_url = :bioUrl
@@ -248,7 +264,8 @@ bioUrl: if(payload.artist.bio.content != null) (	payload.artist.bio.links.link.h
 	groupName: vars.lastFmProperties.artist
 }]]]></db:input-parameters>
 		</db:update>
+		<sps-logger:sps-logger doc:name="Update Artist" doc:id="a4e31c6d-2f56-40ed-b9f8-3f589f877696" config-ref="SPS_Logger_Config" targetSystem="${db.databaseMusic}" eventName="AFTER REQUEST" level="DEBUG" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-patch-artist::Update::payload:' ++ write(payload, 'application/json')]" category="${logcat}"/>
 		<set-payload value="#[%dw 2.0&#10;output application/json&#10;var FOUND_STATUS = p('http.get.status.ok')&#10;var FOUND_MESSAGE = p('http.get.message.ok')&#10;---&#10;{&#10;	statusCode: FOUND_STATUS,&#10;	message: FOUND_MESSAGE,&#10;	bioUrl: vars.bioUrl,&#10;	recordsUpdated: payload.affectedRows&#10;}]" doc:name="Set Payload" doc:id="39b4dbe9-7b3a-4f67-8953-c2b9ab1e6ebb" />
-		<logger level="INFO" doc:name="INFO END payload" doc:id="6dc3df90-bf4e-4cd4-8705-563128e8e26e" message="#['sr-patch-artist::END::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO END" doc:id="7847a934-2fa2-4a98-a741-bece873d3e54" correlationId="#[vars.headerAttributes.correlationId]" message="#['sr-patch-artist::END::payload:'  ++ write(payload, 'application/json')]" category="${logcat}" eventName="END" config-ref="SPS_Logger_Config"/>
 	</sub-flow>
 </mule>
