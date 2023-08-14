@@ -2,16 +2,16 @@
 <mule xmlns:sps-logger="http://www.mulesoft.org/schema/mule/sps-logger" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
 http://www.mulesoft.org/schema/mule/sps-logger http://www.mulesoft.org/schema/mule/sps-logger/current/mule-sps-logger.xsd">
     <flow name="AS-music-factory-api-main">
-        <http:listener config-ref="http-listener-config" path="/${http.router.path}/*">
+        <http:listener config-ref="http-listener-config" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body><![CDATA[#[payload]]]></http:body>
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <ee:transform doc:name="headerAttributes &amp; currentFlow" doc:id="4b7ac9c4-cd7a-4a98-aae5-40eb6d0f9864" >
+        <ee:transform doc:name="headerAttributes &amp; currentFlow" doc:id="dfc88cb5-5c84-498b-af8a-d587304819c6" >
 			<ee:message >
 			</ee:message>
 			<ee:variables >
@@ -30,7 +30,7 @@ var currentFlow = "xx-music-factory-api-main::apiKitRouter"
 currentFlow]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<sps-logger:sps-logger doc:name="INFO START" doc:id="f586ae01-9e29-4b21-b1ac-05df29213153" config-ref="SPS_Logger_Config" targetSystem="APIKIT" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['AS-music-factory-api-main::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
+		<sps-logger:sps-logger doc:name="INFO START" doc:id="ceefed12-95a5-4c24-a521-b082cef24b19" config-ref="SPS_Logger_Config" targetSystem="APIKIT" eventName="START" correlationId="#[vars.headerAttributes.correlationId]" message="#['AS-music-factory-api-main::payload: ' ++ write(payload,'application/json')]" category="${logcat}"/>
 		<apikit:router config-ref="AS-music-factory-api-config"/>
     </flow>
     <flow name="AS-music-factory-api-console">
@@ -45,42 +45,4 @@ currentFlow]]></ee:set-variable>
         </http:listener>
         <apikit:console config-ref="AS-music-factory-api-config"/>
     </flow>
-    <flow name="get:\albums\(albumId)\media:as-music-factory-api-config">
-        <ee:transform>
-            <ee:variables>
-                <ee:set-variable variableName="albumId">attributes.uriParams.'albumId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform>
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  statusCode: 200,
-  message: "SUCCESS",
-  media: [
-    {
-      albumId: 2,
-      albumName: "Let It Be",
-      mediaType: "CD",
-      availabilityDate: "2000-05-18"
-    }, 
-    {
-      albumId: 2,
-      albumName: "Let It Be",
-      mediaType: "Cassette",
-      availabilityDate: "1975-04-22"
-    }, 
-    {
-      albumId: 2,
-      albumName: "Let It Be",
-      mediaType: "Vinyl",
-      availabilityDate: "1970-11-18"
-    }
-  ]
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </flow> 
 </mule>

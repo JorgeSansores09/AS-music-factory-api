@@ -40,31 +40,6 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-	<flow name="get:\albums\(albumId)\media:AS-music-factory-api-config" doc:id="51af2e59-10ac-4042-9423-6a4d188cb993">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="albumId">attributes.uriParams.'albumId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  statusCode: 200,
-  message: "SUCCESS",
-  album: {
-    albumTitle: "Let It Be (CD)",
-    genre: "Rock",
-    publicationDate: "2000-05-18",
-    artistId: 1,
-    artistName: "The Beatles"
-  }
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-	</flow>
 	<flow name="put:\albums\(albumId):application\json:AS-music-factory-api-config">
         <ee:transform>
             <ee:variables>
@@ -83,7 +58,7 @@ output application/json
             </ee:message>
         </ee:transform>
     </flow>
-	<flow name="delete:\albums\(albumId):AS-music-factory-api-config">
+    <flow name="delete:\albums\(albumId):AS-music-factory-api-config">
         <ee:transform>
             <ee:variables>
                 <ee:set-variable variableName="albumId">attributes.uriParams.'albumId'</ee:set-variable>
