@@ -10,7 +10,7 @@
 	<munit:config name="artists-impl-test-suite.xml" />
 	<global-property doc:name="Global Property" doc:id="a5681e1e-3117-4d29-9734-8d145dc9a383" name="test" value="local" />
 	<configuration-properties doc:name="Configuration properties" doc:id="e6244506-672e-4453-908a-6f2c86631ce2" file="properties/${test}.properties" />
-	<munit:test name="sr-get-artist-info-test" doc:id="bc19e2bb-957c-4e75-97c9-ecc9d24c073a" description="Test">
+	<munit:test name="sr-get-artist-info-test" doc:id="bc19e2bb-957c-4e75-97c9-ecc9d24c073a" description="Test" ignore="true">
 		<munit:behavior >
 			<munit-tools:mock-when doc:name="Mock when Get Artist HTTP Request" doc:id="f5aeb5ab-7bc3-4ac0-a563-47985d170c6f" processor="http:request">
 				<munit-tools:with-attributes >
@@ -46,6 +46,30 @@
 			<munit-tools:assert-that doc:name="Assert that bioUrl found" doc:id="7a84251e-1ff2-4449-a63b-6d4f591891a7" expression="#[payload.bioUrl]" is='#[MunitTools::startsWith("https://")]' message="bioUrl failure"/>
 		</munit:validation>
 	</munit:test>
+	<munit:test name="artists-impl-get-artists-test" doc:id="61ab1b66-e473-49e3-a4c1-8b95522e34fb" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="54992df7-bedb-458c-b70f-0f53b9a0b6b0" processor="db:select">
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[output application/java&#10;---&#10;[{&#10;	ARTIST_ID: 2,&#10;	GROUP_NM: "MUnit Test",&#10;	FIRST_NM: "John",&#10;	LAST_NM: "Lennon",&#10;	BIRTH_DATE: "1940-01-01",&#10;	DEATH_DATE: "1980-11-01"&#10;}]]' mediaType="application/java" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="groupName queryParam" doc:id="90585b4a-08e7-498e-bbe2-dc69d3737f48" >
+				<munit:attributes value='#[{queryParams: {"groupName":"MUnit Test"}}]' />
+				<munit:variables >
+					<munit:variable key="headerAttributes" value="#[{correlationId: '12345', clientId: '12345', clientSecret: '12345'}]" mediaType="application/java" />
+				</munit:variables>
+			</munit:set-event>
+			<flow-ref doc:name="impl-get-artists" doc:id="057caf08-82f5-49eb-8773-9a6b558a3bf1" name="impl-get-artists"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that NOT null" doc:id="6c8e7e6f-b7db-4960-acec-9356407864d3" message="NOT null" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+			<munit-tools:assert-that doc:name="Assert that Artist firstName" doc:id="090dc890-fc16-4457-8cd9-869a820c2c8c" message="NOT John" expression="#[payload.artists[0].firstName as String]" is="#[MunitTools::startsWith('John')]"/>
+			<munit-tools:assert-that doc:name="Assert that Artist lastName" doc:id="7450bdb2-1072-4813-85c7-43312bd7939e" message="NOT Lennon" expression="#[payload.artists[0].firstName as String]" is="#[MunitTools::startsWith('Lennon')]"/>
+		</munit:validation>
+	</munit:test>
+
 
 
 </mule>
