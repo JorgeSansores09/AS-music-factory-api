@@ -25,7 +25,7 @@ output application/json
 }]]></ee:set-variable>
 				<ee:set-variable variableName="currentFlow" ><![CDATA[%dw 2.0
 output application/json
-var currentFlow = "xx-music-factory-api-main::apiKitRouter"
+var currentFlow = "AS-music-factory-api-main::apiKitRouter"
 ---
 currentFlow]]></ee:set-variable>
 			</ee:variables>

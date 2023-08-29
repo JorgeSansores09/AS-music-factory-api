@@ -49,13 +49,20 @@
 					</execution>
 				</executions>
 				<configuration>
-					<coverage>
-						<runCoverage>true</runCoverage>
-						<formats>
-							<format>html</format>
-						</formats>
-					</coverage>
-				</configuration>
+  		  <argLines>
+	  <argLine>-Danypoint.platform.gatekeeper=disabled</argLine>
+    </argLines>
+    <coverage>
+        <runCoverage>true
+    </runCoverage>
+    <failBuild>true</failBuild>
+    <formats>
+        <format>console</format>
+	  <format>html</format>
+	  <format>json</format>
+    </formats>
+    </coverage>
+</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -181,3 +188,4 @@
 	</pluginRepositories>
 
 </project>
+

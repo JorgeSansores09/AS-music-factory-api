@@ -122,7 +122,7 @@
 		</munit:execution>
 		<munit:validation >
 			<munit-tools:assert-that doc:name="Assert that NOT null" doc:id="a58472a7-c49e-4852-a664-9dcf7ea400ae" message="NOT null" expression="#[payload]" is="#[MunitTools::notNullValue()]" />
-			<munit-tools:assert-that doc:name="Assert that duplicates = " doc:id="6257bcf9-bd76-4ef9-8be4-487e407e2b6f" message="duplicates = 2" expression="#[sizeOf(payload.results.duplicatedArtists)]" is="#[MunitTools::equalTo(2)]" />
+			<munit-tools:assert-that doc:name="Assert that duplicates = 2" doc:id="6257bcf9-bd76-4ef9-8be4-487e407e2b6f" message="duplicates = 2" expression="#[sizeOf(payload.results.duplicatedArtists)]" is="#[MunitTools::equalTo(2)]" />
 		</munit:validation>
 	</munit:test>
 
